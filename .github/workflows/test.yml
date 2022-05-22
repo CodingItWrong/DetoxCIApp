@@ -4,27 +4,62 @@ on: [push]
 jobs:
   test:
     name: Test
-    runs-on: ubuntu-22.04
+    runs-on: macos-latest
+    timeout-minutes: 15
+    # env:
+    #   DEVELOPER_DIR: /Applications/Xcode_??.app
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - uses: actions/cache@v3
-        id: yarn-cache
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          fetch-depth: 1
+
+      - name: Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      # - name: Get yarn cache directory path
+      #   id: yarn-cache-dir-path
+      #   run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      # - name: Cache node modules
+      #   uses: actions/cache@v3
+      #   id: cache
+      #   with:
+      #     path: node_modules
+      #     key: node_modules-${{ hashFiles('**/yarn.lock') }}
+
+      # - name: Cache yarn cache
+      #   uses: actions/cache@v3
+      #   id: yarn-cache
+      #   with:
+      #     path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+      #     key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-yarn-
+
+      # - name: Rebuild detox
+      #   # if: steps.cache.outputs.cache-hit == 'true'
+      #   run: detox clean-framework-cache && detox build-framework-cache
 
       - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
 
-      - name: Unit Tests
-        run: yarn test --watchAll=false
+      # - name: Cache Pods
+      #   uses: actions/cache@v1
+      #   id: podcache
+      #   with:
+      #     path: ios/Pods
+      #     key: pods-${{ hashFiles('**/Podfile.lock') }}
 
-      - name: ESLint
-        run: yarn lint
+      - name: Update Pods
+        run: |
+          gem update cocoapods xcodeproj
+          cd ios && pod install && cd ..
+
+      - run: brew tap wix/brew
+      - run: brew install applesimutils
+      - run: yarn detox build e2e --configuration ios.sim.release
+      - run: yarn detox test e2e --configuration ios.sim.release --cleanup --debug-synchronization 200
