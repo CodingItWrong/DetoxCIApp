@@ -51,6 +51,7 @@ jobs:
           key: ios-${{ hashFiles('**/Podfile.lock') }}
 
       - name: Update Pods
+        if: steps.podcache.outputs.cache-hit != 'true'
         run: |
           gem update cocoapods xcodeproj
           cd ios && pod install && cd ..
