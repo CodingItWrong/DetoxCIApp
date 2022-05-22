@@ -19,6 +19,15 @@ jobs:
         with:
           node-version: 16
 
+      - name: Back up Yarn's cache
+        uses: actions/cache@v3
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
       # - name: Cache node modules
       #   uses: actions/cache@v3
       #   id: cache
