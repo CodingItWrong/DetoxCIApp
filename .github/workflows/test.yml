@@ -31,7 +31,7 @@ jobs:
       #   run: detox clean-framework-cache && detox build-framework-cache
 
       - name: Install Dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
+        # if: steps.cache.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
 
       # Should save around 5 minutes from "Update Pods"
