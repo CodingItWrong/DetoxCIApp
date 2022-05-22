@@ -6,8 +6,6 @@ jobs:
     name: Test
     runs-on: macos-latest
     timeout-minutes: 60
-    # env:
-    #   DEVELOPER_DIR: /Applications/Xcode_??.app
     steps:
       - name: Checkout
         uses: actions/checkout@v3
