@@ -30,13 +30,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      # - name: Cache node modules
-      #   uses: actions/cache@v3
-      #   id: cache
-      #   with:
-      #     path: node_modules
-      #     key: node_modules-${{ hashFiles('**/yarn.lock') }}
+      - name: Cache node modules
+        uses: actions/cache@v3
+        id: cache
+        with:
+          path: node_modules
+          key: node_modules-${{ hashFiles('**/yarn.lock') }}
 
+      # # Necessary if you cache node modules
       # - name: Rebuild detox
       #   # if: steps.cache.outputs.cache-hit == 'true'
       #   run: detox clean-framework-cache && detox build-framework-cache
