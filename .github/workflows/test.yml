@@ -42,6 +42,14 @@ jobs:
           path: ios/Pods
           key: pods-${{ hashFiles('**/Podfile.lock') }}
 
+      # TODO: see how fast this is, but might have to cache more if you're updating the native projects
+      - name: Cache iOS Build Folder
+        uses: actions/cache@v3
+        id: ioscache
+        with:
+          path: ios/build
+          key: ios-${{ hashFiles('**/Podfile.lock') }}
+
       - name: Update Pods
         run: |
           gem update cocoapods xcodeproj
