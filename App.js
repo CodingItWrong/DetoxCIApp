@@ -6,7 +6,7 @@ export default function App() {
     <>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView>
-        <Text>Hello, React Native!</Text>
+        <Text>Goodbye, React Native!</Text>
       </SafeAreaView>
     </>
   );
